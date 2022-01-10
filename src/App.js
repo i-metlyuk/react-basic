@@ -1,47 +1,63 @@
-import React, {Component, useRef, useState, useEffect} from 'react';
+import React, { useState, memo, useCallback, PureComponent } from 'react';
 import {Container} from 'react-bootstrap';
 import './App.css';
 
-function useInputWithValidate(initalValue) {
-    const [value, setValue] = useState(initalValue);
+// class Form extends Component {
 
-    const onChange = event => {
-        setValue(event.target.value);
-    }
+//     shouldComponentUpdate(nextProps) {
+//         if (this.props.mail.name === nextProps.mail.name) {
+//             return false;
+//         }
 
-    const validateInput = () => {
-        return (value.search(/\d/) >= 0)
-    }
+//         return true;
+//     };
 
-    return {
-        value: value,
-        onChange: onChange,
-        validateInput: validateInput
-    }
-}
+//     render() {
+//         console.log('render')
+//         return (
+//             <Container>
+//                 <form className="w-50 border mt-5 p-3 m-auto">
+//                     <div className="mb-3">
+//                         <label htmlFor="exampleFormControlInput1" className="form-label mt-3">Email address</label>
+//                         <input
+//                             value={this.props.mail.name}
+//                             type="email"
+//                             className={`form-control`}
+//                             id="exampleFormControlInput1"
+//                             placeholder="name@example.com"
+//                         />
+//                     </div>
+//                     <div className="mb-3">
+//                         <label htmlFor="exampleFormControlTextarea1" className="form-label">Example textarea</label>
+//                         <textarea
+//                             value={this.props.text}
+//                             className="form-control"
+//                             id="exampleFormControlTextarea1"
+//                             rows="3">
+//                         </textarea>
+//                     </div>
+//                 </form>
+//             </Container>
+//         )
+    
+//     }
+// }
 
-const Form = () => {
-    const input = useInputWithValidate('');
-    const textArea = useInputWithValidate('');
+// function propsCompare(prevProps, nextProps) {
+//     return prevProps.mail.name === nextProps.mail.name && prevProps.text === nextProps.text;
+// }
 
-    const color = input.validateInput() ? 'text-danger' : null;
-
+const Form = memo((props) => {
+    console.log('render')
     return (
         <Container>
             <form className="w-50 border mt-5 p-3 m-auto">
                 <div className="mb-3">
-                    <input
-                        value={`${input.value} / ${textArea.value}`}
-                        type='text'
-                        className='form-control'
-                        readOnly>
-                    </input>
                     <label htmlFor="exampleFormControlInput1" className="form-label mt-3">Email address</label>
                     <input
-                        value={input.value}
-                        onChange={input.onChange}
+                        value={props.mail}
                         type="email"
-                        className={`form-control ${color}`}
+                        className={`form-control`}
                         id="exampleFormControlInput1"
                         placeholder="name@example.com"
                     />
@@ -49,8 +65,7 @@ const Form = () => {
                 <div className="mb-3">
                     <label htmlFor="exampleFormControlTextarea1" className="form-label">Example textarea</label>
                     <textarea
-                        onChange={textArea.onChange}
-                        value={textArea.value}
+                        value={props.text}
                         className="form-control"
                         id="exampleFormControlTextarea1"
                         rows="3">
@@ -60,28 +75,31 @@ const Form = () => {
         </Container>
     )
 
-}
-
-class TextInput extends Component {
-    doSmth = () => {
-        console.log('smth')
-    }
-
-    render() {
-        return (
-            <input
-                type="email"
-                className="form-control"
-                id="exampleFormControlInput1"
-                placeholder="name@example.com"
-            />
-        );
-    }
-}
+});
 
 function App() {
+    const [data, setData] = useState({
+        mail: 'name@example.com',
+        text: 'some text'
+    });
+
+    const onLog = useCallback(() => {
+        console.log('wow');
+    }, [])
+
     return (
-        <Form/>
+        <>
+            <Form mail={data.mail} text={data.text} onLog={onLog} />
+            <button
+                onClick={() => {
+                    setData({
+                        mail: 'name@example.com',
+                        text: 'some text'
+                    })
+                }}>
+                Click me
+            </button>
+        </>
     );
 }
 
